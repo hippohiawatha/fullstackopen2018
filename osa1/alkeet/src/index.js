@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const Otsikko = (props) => <h1>{props.nimi}</h1>
+const Otsikko = (props) => <h1>{props.kurssi}</h1>
 
 const Osa = (props) => <p>{props.nimi} {props.tehtavia}</p>
 
