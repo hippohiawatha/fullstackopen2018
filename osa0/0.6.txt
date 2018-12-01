@@ -1,0 +1,19 @@
+kayttaja->selain:
+note left of selain
+kayttaja täyttää lomakkeen
+ja painaa talleta
+end note
+note left of selain
+spa.js lisää uuden noten
+ja näyttää sen käyttäjälle
+end note
+selain->palvelin: POST fullstack-exampleapp.herokuapp.com/new_note_spa
+note right of selain
+ palvelin tallettaa noten
+end note
+palvelin->selain: status 201, palauttaa onnistumisviestin
+
+
+note left of selain
+    viesti näytetään konsolissa
+end note 
