@@ -12,7 +12,7 @@ const Countries = (props) => {
 
     else if(filtered.length === 1){
       const country = filtered[0]
-      
+
       return(
         <div>
           <h1>{country.name}</h1>
