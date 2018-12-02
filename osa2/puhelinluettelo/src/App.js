@@ -1,6 +1,7 @@
 import React from 'react';
 import Person from './components/person'
 import contactService from './services/contacts'
+import './index.css'
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNum: '',
-      search: ''
+      search: '',
+      message: null
     }
   }
 
@@ -28,32 +30,39 @@ class App extends React.Component {
   addPerson = (event) => {
     event.preventDefault()
     const personObj = {name: this.state.newName, number: this.state.newNum}
+    const name = personObj.name
     let persons = this.state.persons
     if(!persons.map(pers => pers.name).includes(personObj.name)){
       contactService
         .create(personObj)
         .then(response => {
           this.setState({
-            persons: this.state.persons.concat(response.data),
+            persons: persons.concat(response.data),
             newName: '',
-            newNum: ''
+            newNum: '',
+            message: "Lisättiin " + name
           })
+          setTimeout(() => this.setState({message: null}), 5000)
         })
     }
     else{
       const index = this.state.persons.findIndex(per => per.name === personObj.name)
       const id = this.state.persons[index].id
-      contactService
-        .update(id, personObj)
-        .then(person => {
-          console.log(person.id)
-          const persons = this.state.persons.filter(pers => pers.id !== id)
-          this.setState({
-            persons: persons.concat(person),
-            newName: '',
-            newNum: ''
+      if(window.confirm(this.state.persons[index].name + " on jo luettelossa, korvataanko vanha numero uudella?")){
+        contactService
+          .update(id, personObj)
+          .then(person => {
+            console.log(person.id)
+            const persons = this.state.persons.filter(pers => pers.id !== id)
+            this.setState({
+              persons: persons.concat(person),
+              newName: '',
+              newNum: '',
+              message: "Henkilön " + this.state.persons[index].name + " numero vaihdettiin"
+            })
+            setTimeout(() => this.setState({message: null}), 5000)
           })
-        })
+      }
     }
   }
 
@@ -75,8 +84,10 @@ class App extends React.Component {
           .remove(id)
           .then(response => {
             this.setState({
-              persons: this.state.persons.filter(per => per.id !== id)
+              persons: this.state.persons.filter(per => per.id !== id),
+              message: "Poistettiin " + name
             })
+            setTimeout(() => this.setState({message: null}), 5000)
           })
       }
     }
@@ -86,6 +97,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Notification message={this.state.message}/>
         <div>search: <input value={this.state.search} onChange={this.search}/></div>
 
         <h2>Lisää uusi</h2>
@@ -104,3 +116,14 @@ class App extends React.Component {
 }
 
 export default App
+
+const Notification = ({message}) => {
+  if(message === null) return null
+  else{
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  }
+}
